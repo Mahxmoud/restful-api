@@ -33,12 +33,8 @@ server.post('/', (req, res) => {
 
 // GET USER BY ID
 server.get('/:userId', async (req, res) => {
-    try {
         const user = await User.findById(req.params.userId)
         res.json(user)
-    } catch (err) {
-        res.json({ message: err })
-    }
 })
 
 // DELETE USER
@@ -47,6 +43,15 @@ server.delete('/:userId', async (req, res) => {
     res.json(removedUser)
 })
 
+// UPDATE USER
+server.put('/:userId', async (req, res) => {
+    const updatedUser = await User.updateOne({ _id: req.params.userId }, {
+        $set: {
+            name: req.body.name,
+        phone: req.body.phone}
+    })
+    res.json(updatedUser)
+})
 
 // CONNECT TO DB
 mongoose.connect(
