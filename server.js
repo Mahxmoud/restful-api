@@ -2,7 +2,10 @@ const express = require('express')
 const mongoose = require('mongoose')
 require('dotenv').config()
 const server = express()
+
+// REQUIRING USER MODEL
 const User = require('./models/User')
+
 const bodyParser = require('body-parser')
 
 // PARSE DATA TO JSON FORMAT
@@ -17,7 +20,7 @@ server.get('/', (req, res) => {
 })
 
 // ADD A NEW USER
-server.post('/add', (req, res) => {
+server.post('/', (req, res) => {
     const user = new User({
         name: req.body.name,
         phone: req.body.phone
@@ -26,6 +29,22 @@ server.post('/add', (req, res) => {
         .then(data => {
             res.json(data)
         })
+})
+
+// GET USER BY ID
+server.get('/:userId', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId)
+        res.json(user)
+    } catch (err) {
+        res.json({ message: err })
+    }
+})
+
+// DELETE USER
+server.delete('/:userId', async (req, res) => {
+    const removedUser = await User.remove({ _id: req.params.userId })
+    res.json(removedUser)
 })
 
 
@@ -37,9 +56,10 @@ mongoose.connect(
     () => console.log('connected to DB!')
 )
 
+// LISTENING TO THE SERVER ON 3000 PORT
 server.listen(3000, (err) => {
-    if (err) 
+    if (err)
         console.log(err)
-    else 
+    else
         console.log('server connected on 3000')
 })
